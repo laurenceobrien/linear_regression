@@ -7,6 +7,29 @@ import statsmodels.api as sm
 
 
 def simulate_data():
+    x1 = np.random.exponential(9000,1000)
+    x2 = np.random.poisson(15, 1000)
+    beta1 = 10
+    beta2 = -3
+    epsilon = np.random.normal(0,1,1000)
+
+    y = [None]*1000
+    for i in range(0,1000):
+        y[i] = beta1*x1[i] + beta2*x2[i] + epsilon[i]
+
+    vars = pd.DataFrame( data = x1, columns=["x1"])
+    vars.insert(1, "x2", x2)
+    vars.insert(1, "epsilon", epsilon) 
+    
+    print(y)
+    print(y[1])
+    print(x1[1], x2[1], epsilon[1])
+    print(vars)
+
+    stats_model = 
+
+
+
     """
     Simulates data for testing linear_regression models.
     INPUT
@@ -16,7 +39,7 @@ def simulate_data():
     """
     pass
 
-
+simulate_data()
 def compare_models():
     """
     Compares output from different implementations of OLS.
