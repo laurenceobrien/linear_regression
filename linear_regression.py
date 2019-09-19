@@ -7,8 +7,10 @@ import statsmodels.api as sm
 
 
 def simulate_data():
+    x0 = [1]*1000
     x1 = np.random.exponential(9000,1000)
     x2 = np.random.poisson(15, 1000)
+    beta0 = 0
     beta1 = 10
     beta2 = -3
     epsilon = np.random.normal(0,1,1000)
@@ -17,30 +19,44 @@ def simulate_data():
     for i in range(0,1000):
         y[i] = beta1*x1[i] + beta2*x2[i] + epsilon[i]
 
-    vars = pd.DataFrame( data = x1, columns=["x1"])
-    vars.insert(1, "x2", x2)
-    vars.insert(1, "epsilon", epsilon) 
     
-    print(y)
-    print(y[1])
-    print(x1[1], x2[1], epsilon[1])
-    print(vars)
+    ind_vars = pd.DataFrame( data = x0, columns=["x0"])
+    ind_vars['x1'] = x1
+    ind_vars['x2'] = x2
+   
+    
+    #print(y)
+    #print(y[1])
+    #print(x1[1], x2[1], epsilon[1])
+    #print(vars)
 
-    stats_model = 
-
-
+    data = {"X": ind_vars, "beta" : [beta0, beta1, beta2], "y": y}
+    #print(data)
+    return data
 
     """
     Simulates data for testing linear_regression models.
-    INPUT
-        nobs (int) the number of observations in the dataset
+
     RETURNS
         data (dict) contains X, y, and beta vectors.
     """
-    pass
+    
 
-simulate_data()
-def compare_models():
+data = simulate_data()
+print(data)
+print(data["X"])
+def compare_models(ind_vars, y):
+
+    stats_model = sm.OLS(y, ind_vars)
+    stats_results = stats_model.fit()
+    print(stats_results.params)
+
+    sk_model = LinearRegression().fit(ind_vars, y)
+    print(sk_model.coef_)
+
+    results = pd.DataFrame(data = stats_results.params, columns=["statsmodels"])
+    results.insert(1, "sklearn", sk_model.coef_)
+    print(results)
     """
     Compares output from different implementations of OLS.
     INPUT
@@ -49,10 +65,14 @@ def compare_models():
     RETURNS
         results (pandas.DataFrame) of estimated beta coefficients
     """
-    pass
+    
+compare_models(data["X"], data["y"])
 
 
 def load_hospital_data():
+
+
+
     """
     Loads the hospital charges data set found at data.gov.
     INPUT
